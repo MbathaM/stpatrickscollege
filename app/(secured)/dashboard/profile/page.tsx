@@ -4,8 +4,7 @@ import { toast } from "@/components/ui/sonner";
 import { api } from "@/convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
 import { useMutation, useQuery } from "convex/react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -29,7 +28,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Id } from "@/convex/_generated/dataModel";
 
 export default function ProfilePage() {
-  const router = useRouter();
   const { data } = authClient.useSession();
   const email = data?.user?.email || "";
   const name = data?.user?.name || "";
@@ -60,7 +58,7 @@ export default function ProfilePage() {
   const updateProfile = useMutation(api.profile.update);
   
   // Update form data when profile loads
-  useState(() => {
+  useEffect(() => {
     if (profile) {
       setFormData({
         classroom: profile.classroom || "",
@@ -71,7 +69,7 @@ export default function ProfilePage() {
         concessionTime: profile.concessionTime || 0,
       });
     }
-  });
+  }, [profile]);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,7 +91,7 @@ export default function ProfilePage() {
           description: "Your profile has been updated successfully.",
         });
       }
-    } catch (error) {
+    } catch (_) {
       toast.error("Update failed", {
         description: "There was an error updating your profile.",
       });

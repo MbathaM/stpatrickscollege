@@ -91,9 +91,10 @@ export default function ProfilePage() {
           description: "Your profile has been updated successfully.",
         });
       }
-    } catch (_) {
+       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       toast.error("Update failed", {
-        description: "There was an error updating your profile.",
+        description: error.message || "There was an error updating your profile.",
       });
     } finally {
       setLoading(false);

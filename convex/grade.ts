@@ -7,7 +7,7 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert("grade", {
-      name: args.name,
+      name: Number(args.name),
     });
   },
 });
@@ -28,7 +28,7 @@ export const getById = query({
 export const update = mutation({
   args: {
     id: v.id("grade"),
-    name: v.string(),
+    name: v.number(),
   },
   handler: async (ctx, args) => {
     const { id, ...fields } = args;

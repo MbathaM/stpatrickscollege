@@ -1,4 +1,4 @@
-\"use client";
+"use client";
 
 import { SingleGradeSelector } from "@/components/shared/single-grade-selector";
 import { SubjectSelector } from "@/components/shared/subject-selector";

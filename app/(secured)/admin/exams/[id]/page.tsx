@@ -21,11 +21,11 @@ export default function ExamDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const examId = params.id as Id<"exam">;
   
-  // Fetch exam and related data
+  // Fetch exam and related data - moved all useQuery calls to top level
   const exam = useQuery(api.exams.getById, { id: examId });
-  const grade = exam ? useQuery(api.grade.getById, { id: exam.gradeId }) : null;
-  const subject = exam ? useQuery(api.subject.getById, { id: exam.subjectId }) : null;
-  const teacher = exam ? useQuery(api.profile.getById, { id: exam.teacherId }) : null;
+  const grade = useQuery(api.grade.getById, exam ? { id: exam.gradeId } : { id: "" as Id<"grade"> });
+  const subject = useQuery(api.subject.getById, exam ? { id: exam.subjectId } : { id: "" as Id<"subject"> });
+  const teacher = useQuery(api.profile.getById, exam ? { id: exam.teacherId } : { id: "" as Id<"profile"> });
   const users = useQuery(api.ad_user.list);
   
   // Loading state
@@ -58,6 +58,63 @@ export default function ExamDetailPage({ params }: { params: { id: string } }) {
         </div>
       </div>
       
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Exam Details</CardTitle>
+            <CardDescription>
+              Basic information about the exam
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Name:</span>
+              <span className="font-medium">{exam.name}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Date:</span>
+              <span className="font-medium">{format(new Date(exam.date), "PPP")}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Duration:</span>
+              <span className="font-medium">{exam.duration} minutes</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Created:</span>
+              <span className="font-medium">{format(new Date(exam.createdAt), "PPP")}</span>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Related Information</CardTitle>
+            <CardDescription>
+              Grade, subject, and teacher details
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Grade:</span>
+              <Link href={`/admin/grades/${grade._id}`} className="font-medium text-primary hover:underline">
+                {grade.name}
+              </Link>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Subject:</span>
+              <Link href={`/admin/subjects/${subject._id}`} className="font-medium text-primary hover:underline">
+                {subject.name}
+              </Link>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Teacher:</span>
+              <Link href={`/admin/teachers/${teacher._id}`} className="font-medium text-primary hover:underline">
+                {users.find(u => u._id === teacher.userId)?.displayName || "Unknown Teacher"}
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>

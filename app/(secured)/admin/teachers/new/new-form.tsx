@@ -7,11 +7,11 @@ import { useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { AutoComplete, type Option } from "@/components/ui/autocomplete";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { AutoComplete, type Option } from "@/components/ui/autocomplete";
 
 export function NewTeacherForm({ users }: { users: Option[] }) {
   const router = useRouter();

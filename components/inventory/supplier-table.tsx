@@ -30,11 +30,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { MoreHorizontal, Pencil, Trash } from "lucide-react";
 import { useState } from "react";
 import { SupplierDialog } from "./supplier-dialog";
-import { Id } from "@/convex/_generated/dataModel";
 
 export function SupplierTable() {
   const suppliers = useQuery(api.supplier.list) || [];

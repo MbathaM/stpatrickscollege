@@ -2,11 +2,11 @@
 
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 
+import { client } from "@/api/client";
 import { CopyableContent } from "@/components/copyable-content";
 import { AutoComplete, type Option } from "@/components/ui/autocomplete";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,8 +26,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
-import { client } from "@/api/client";
 
 export function CommentForm({ users }: { users: Option[] }) {
   const { data } = authClient.useSession();
@@ -64,19 +64,6 @@ export function CommentForm({ users }: { users: Option[] }) {
     setError("");
 
     try {
-      // const response = await fetch("/api/v1/comment", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     grade,
-      //     subject,
-      //     student,
-      //     marks,
-      //     prompt,
-      //   }),
-      // });
       const response = await client.api.comment.$post({
         json: {
           grade,
@@ -158,7 +145,7 @@ export function CommentForm({ users }: { users: Option[] }) {
                     </SelectTrigger>
                     <SelectContent>
                       {teacherGrades.map((g) => (
-                        <SelectItem key={g._id} value={g.name}>
+                        <SelectItem key={String(g._id)} value={String(g.name)}>
                           {g.name}
                         </SelectItem>
                       ))}
@@ -204,7 +191,7 @@ export function CommentForm({ users }: { users: Option[] }) {
                   id="prompt"
                   placeholder="Provide additional context about the student's performance..."
                   value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
+                  onChange={(e: { target: { value: SetStateAction<string>; }; }) => setPrompt(e.target.value)}
                   disabled={loading}
                   maxLength={400}
                 />

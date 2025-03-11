@@ -17,7 +17,7 @@ export function AssetDetails({ id }: { id: string }) {
   const location = asset?.locationId ? useQuery(api.location.getById, { id: asset.locationId }) : null;
   const supplier = asset?.supplierId ? useQuery(api.supplier.getById, { id: asset.supplierId }) : null;
   const status = asset?.statusId ? useQuery(api.asset_status.getById, { id: asset.statusId }) : null;
-  const user = asset?.userId ? useQuery(api.ad_user.getById, { id: asset.userId }) : null;
+  const user = asset?.userId ? useQuery(api.ad_user.getByUserId, { userId: asset.userId as Id<"ad_user"> }) : null;
 
   if (!asset) {
     return (

@@ -1,9 +1,9 @@
-import { getUsers } from "@/helpers/get-users";
+import { getAdUsers } from "@/helpers/get-ad-user";
 import { AzureUser } from "@/types";
 import { CommentForm } from "./comment-form";
 
 async function getAzureUsers(): Promise<AzureUser[]> {
-  const data = await getUsers();
+  const data = await getAdUsers();
   // console.log(data);
   return data;
 }

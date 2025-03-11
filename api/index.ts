@@ -8,6 +8,9 @@ import { auth } from "@/utils/auth";
 import { cronRoute } from "./routes/cron";
 import { helloRoute } from "./routes/hello";
 import { adUserRoute } from "./routes/aduser";
+import { summarizeRoute } from "./routes/summarize";
+import { translateRoute } from "./routes/translate";
+import { chatRoute } from "./routes/chat";
 import { siteConfig } from "@/config/site";
 
 const app = new Hono<{ Variables: ContextVariables }>().basePath("/api");
@@ -48,7 +51,10 @@ const routes = app
   .route("/", helloRoute)
   .route("/", cronRoute)
   .route("/", commentRoute)
-  .route("/", adUserRoute);
+  .route("/", adUserRoute)
+  .route("/", summarizeRoute)
+  .route("/", translateRoute)
+  .route("/", chatRoute);
 
 export type ApiType = typeof routes;
 export { app };

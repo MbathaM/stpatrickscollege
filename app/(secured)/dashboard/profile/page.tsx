@@ -1,11 +1,11 @@
 "use client";
 
-import { api } from "@/convex/_generated/api";
-import { useQuery, useMutation } from "convex/react";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/sonner";
+import { api } from "@/convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
+import { useMutation, useQuery } from "convex/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -26,11 +25,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Id } from "@/convex/_generated/dataModel";
-import { useForm } from "react-hook-form";
-import { TeacherGradeSelector } from "@/components/shared/teacher-grade-selector";
-import { StudentGradeSelector } from "@/components/shared/student-grade-selector";
-import { SubjectSelector } from "@/components/shared/subject-selector";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -86,7 +82,7 @@ export default function ProfilePage() {
         await updateProfile({
           id: profile._id,
           classroom: typeof formData.classroom === 'string' ? parseInt(formData.classroom) : formData.classroom,
-          gradeId: formData.gradeIds[0], // Changed from gradeIds to gradeId
+          gradeIds: [formData.gradeIds[0]], // Wrap in array to match expected type
           subjectIds: formData.subjectIds,
           hasConcession: formData.hasConcession,
           concessionType: formData.concessionType,

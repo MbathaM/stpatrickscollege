@@ -1,11 +1,11 @@
+import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { DashboardSidebar } from "@/components/dashboard/sidebar";
-import { ReactNode } from "react";
-import { getSession } from "@/helpers/get-sessions";
 import { api } from "@/convex/_generated/api";
+import { getSession } from "@/helpers/get-sessions";
 import { ConvexHttpClient } from "convex/browser";
 import { redirect } from "next/navigation";
+import { ReactNode } from "react";
 
 export default async function DashboardLayout({
   children,

@@ -1,9 +1,9 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
+import { BookOpen, Home, LucideIcon, MessageSquare, Settings, User, FileText, Globe, MessageCircle } from "lucide-react";
 import Link from "next/link";
-import { LucideIcon, User, BookOpen, MessageSquare, Home, Settings } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 interface SidebarProps {
   role: "teacher" | "student";
@@ -34,6 +34,24 @@ const sidebarItems: SidebarItem[] = [
     href: "/dashboard/comment",
     icon: MessageSquare,
     roleAccess: ["teacher"],
+  },
+  {
+    title: "Summarize",
+    href: "/dashboard/summarize",
+    icon: FileText,
+    roleAccess: ["teacher", "student"],
+  },
+  {
+    title: "Translate",
+    href: "/dashboard/translate",
+    icon: Globe,
+    roleAccess: ["teacher", "student"],
+  },
+  {
+    title: "Chat",
+    href: "/dashboard/chat",
+    icon: MessageCircle,
+    roleAccess: ["teacher", "student"],
   },
   {
     title: "Subjects",

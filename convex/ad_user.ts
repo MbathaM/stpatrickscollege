@@ -31,7 +31,7 @@ export const getByUserEmail = query({
   handler: async (ctx, args) => {
     const profiles = await ctx.db
       .query("ad_user")
-      .filter((q) => q.eq(q.field("userId"), args.email))
+      .filter((q) => q.eq(q.field("email"), args.email))
       .collect();
     return profiles[0];
   },

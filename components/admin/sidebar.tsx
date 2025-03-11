@@ -1,19 +1,18 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
-import { 
-  LucideIcon, 
-  Users, 
-  GraduationCap, 
-  BookOpen, 
-  ClipboardList, 
-  FileText, 
-  MessageSquare, 
+import {
+  BookOpen,
+  ClipboardList,
+  FileText,
+  GraduationCap,
   Home,
-  Settings 
+  LucideIcon,
+  MessageSquare,
+  Users
 } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface SidebarProps {}
 

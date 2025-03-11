@@ -1,9 +1,10 @@
 "use client";
 
 import { api } from "@/convex/_generated/api";
-import { useQuery } from "convex/react";
 import { authClient } from "@/lib/auth-client";
+import { useQuery } from "convex/react";
 
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -11,17 +12,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/sonner";
+import { Switch } from "@/components/ui/switch";
+import { useState } from "react";
 
 export default function SettingsPage() {
   const { data } = authClient.useSession();
   const email = data?.user?.email || "";
-  const name = data?.user?.name || "";
   
   // Get user profile
   const profile = useQuery(api.profile.getByEmail, email ? { email } : "skip");

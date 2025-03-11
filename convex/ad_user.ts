@@ -50,3 +50,10 @@ export const getByUserId = query({
     return profiles[0];
   },
 });
+
+// List all user
+export const list = query({
+  handler: async (ctx) => {
+    return await ctx.db.query("ad_user").collect();
+  },
+});

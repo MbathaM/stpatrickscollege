@@ -14,8 +14,8 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-// Removed empty interface and using React.FC type instead
-type SidebarProps = React.PropsWithChildren<{}>;
+// Define props type without using empty object type
+type SidebarProps = React.PropsWithChildren;
 
 interface SidebarItem {
   title: string;

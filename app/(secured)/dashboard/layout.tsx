@@ -3,9 +3,9 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { api } from "@/convex/_generated/api";
 import { getSession } from "@/helpers/get-sessions";
-import { ConvexHttpClient } from "convex/browser";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
+import { preloadQuery, preloadedQueryResult } from "convex/nextjs";
 
 export default async function DashboardLayout({
   children,
@@ -20,14 +20,11 @@ export default async function DashboardLayout({
     redirect("/sign-in");
   }
 
-  // Create a Convex HTTP client
-  const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
-  
-  // Determine the user's role from their email
-  const role = await convex.query(api.profile.determineRoleFromEmail, { email });
+ // Determine the user's role from their email
+  const role = preloadedQueryResult (await preloadQuery(api.profile.determineRoleFromEmail, { email }));
   
   // Get the user's profile
-  const profile = await convex.query(api.profile.getByEmail, { email });
+  const profile = preloadedQueryResult (await preloadQuery(api.profile.getByEmail, { email }));
   
   // If profile is not complete, redirect to onboarding
   if (!profile || !profile.isComplete) {

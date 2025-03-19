@@ -26,9 +26,12 @@ import type * as init_grades from "../init_grades.js";
 import type * as init_subjects from "../init_subjects.js";
 import type * as location from "../location.js";
 import type * as manufacturer from "../manufacturer.js";
+import type * as notes from "../notes.js";
 import type * as profile from "../profile.js";
 import type * as subject from "../subject.js";
 import type * as supplier from "../supplier.js";
+import type * as timer from "../timer.js";
+import type * as todo from "../todo.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -52,9 +55,12 @@ declare const fullApi: ApiFromModules<{
   init_subjects: typeof init_subjects;
   location: typeof location;
   manufacturer: typeof manufacturer;
+  notes: typeof notes;
   profile: typeof profile;
   subject: typeof subject;
   supplier: typeof supplier;
+  timer: typeof timer;
+  todo: typeof todo;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

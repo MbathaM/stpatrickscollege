@@ -79,6 +79,33 @@ export default defineSchema({
     updatedAt: v.string(),
   }),
 
+  // ================Notes and Todos tables ====================
+  note: defineTable({
+    title: v.string(),
+    content: v.string(),
+    userId: v.id("profile"), // link to profile table (owner)
+    isShared: v.boolean(), // whether the note is shared with others
+    sharedWith: v.optional(v.array(v.id("profile"))), // profiles this note is shared with
+    color: v.optional(v.string()), // for UI customization
+    tags: v.optional(v.array(v.string())), // for categorization
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  }),
+
+  todo: defineTable({
+    title: v.string(),
+    description: v.optional(v.string()),
+    userId: v.id("profile"), // link to profile table (owner)
+    isCompleted: v.boolean(),
+    dueDate: v.optional(v.string()),
+    priority: v.optional(v.string()), // "low", "medium", "high"
+    isShared: v.boolean(), // whether the todo is shared with others
+    sharedWith: v.optional(v.array(v.id("profile"))), // profiles this todo is shared with
+    relatedSubjectId: v.optional(v.id("subject")), // optional link to a subject
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  }),
+
   // ================Invventory tables ====================
   manufacturer: defineTable({
     name: v.string(),

@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { BookOpen, Home, LucideIcon, MessageSquare, Settings, User, FileText, Globe, MessageCircle } from "lucide-react";
+import { BookOpen, Home, LucideIcon, MessageSquare, Settings, User, FileText, Globe, MessageCircle, ClipboardList } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -21,6 +21,18 @@ const sidebarItems: SidebarItem[] = [
     title: "Overview",
     href: "/dashboard",
     icon: Home,
+    roleAccess: ["teacher", "student"],
+  },
+  {
+    title: "Notes",
+    href: "/dashboard/notes",
+    icon: FileText,
+    roleAccess: ["teacher", "student"],
+  },
+  {
+    title: "Todos",
+    href: "/dashboard/todos",
+    icon: ClipboardList,
     roleAccess: ["teacher", "student"],
   },
   {

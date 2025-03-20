@@ -3,16 +3,16 @@ import { BetterAuthOptions } from "better-auth";
 import { APIError } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import { emailOTP } from "better-auth/plugins";
-import { convexAdapter } from "convex-better-auth";
+import { convexAdapter } from "@better-auth-kit/convex";
 import { getAdUserByEmail } from "@/helpers/get-ad-user";
-import { ConvexHttpClient } from "convex/browser";
+import { ConvexClient } from "convex/browser";
 
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+const convexClient = new ConvexClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 const authOptions = {
   //...config options
   secret: process.env.BETTER_AUTH_SECRET,
-  database: convexAdapter({ convex_url: convex.url }),
+  database: convexAdapter(convexClient),
   rateLimit: {
     storage: "database",
   },
@@ -61,4 +61,4 @@ const authOptions = {
   ]
 } satisfies BetterAuthOptions;
 
-export { authOptions, convex }
+export { authOptions }

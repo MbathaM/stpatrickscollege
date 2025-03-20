@@ -3,10 +3,9 @@ import { SiteHeader } from "@/components/site-header";
 import { AdminSidebar } from "@/components/admin/sidebar";
 import { ReactNode } from "react";
 import { getSession } from "@/helpers/get-sessions";
-import { api } from "@/convex/_generated/api";
-import { ConvexHttpClient } from "convex/browser";
 import { redirect } from "next/navigation";
-
+import Unauthorised from "@/components/errors/unauthorized";
+import { getRoleByEmail } from "@/lib/utils";
 export default async function AdminLayout({
   children,
 }: {
@@ -20,25 +19,13 @@ export default async function AdminLayout({
     redirect("/sign-in");
   }
 
-  // Create a Convex HTTP client
-  const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
-  
-  // Determine the user's role from their email
-  const role = await convex.query(api.profile.determineRoleFromEmail, { email });
-  
-  // Get the user's profile
-  const profile = await convex.query(api.profile.getByEmail, { email });
-  
-  // If profile is not complete, redirect to onboarding
-  if (!profile || !profile.isComplete) {
-    redirect("/onboarding");
-  }
+  // If the user is not an teacher, block them from accessing the admin dashboard
+  const role = getRoleByEmail(email);
 
-  // Check if user is an admin (for now, we'll assume teachers are admins)
-  if (role !== "teacher") {
-    redirect("/dashboard");
+  if (role == "student") {
+   return <Unauthorised />
   }
-
+  
   return (
     <div className="flex flex-col min-h-screen">
       <SiteHeader />

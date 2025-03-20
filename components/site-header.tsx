@@ -2,6 +2,7 @@ import { MainNav } from "@/components/main-nav";
 import { MobileNav } from "@/components/mobile-nav";
 import { ModeSwitcher } from "@/components/mode-switcher";
 import { AuthLinks } from "./auth-links";
+import { ThemeSelector } from "@/components/themes-selector";
 
 export function SiteHeader() {
   return (
@@ -11,6 +12,7 @@ export function SiteHeader() {
         <MobileNav />
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <nav className="flex gap-2 items-center">
+            <ThemeSelector />
             <ModeSwitcher />
             <AuthLinks />
           </nav>

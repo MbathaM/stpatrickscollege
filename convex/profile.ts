@@ -13,6 +13,7 @@ export const create = mutation({
     hasConcession: v.optional(v.boolean()),
     concessionType: v.optional(v.string()),
     concessionTime: v.optional(v.number()),
+    isComplete: v.optional(v.boolean()),
     permissions: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args) => {
@@ -33,7 +34,7 @@ export const create = mutation({
       hasConcession: args.hasConcession || false,
       concessionType: args.concessionType,
       concessionTime: args.concessionTime,
-      isComplete: true,
+      isComplete: args.isComplete || true,
       permissions: permissions,
     });
   },

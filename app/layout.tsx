@@ -6,6 +6,8 @@ import type { Metadata, Viewport } from "next";
 import { cn } from "@/lib/utils";
 import { ConvexClientProvider } from "@/providers/convex-client";
 import { Providers } from "@/providers/theme";
+import { ActiveThemeProvider } from "@/components/active-theme";
+import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
   title: {
@@ -33,12 +35,15 @@ export const viewport: Viewport = {
     { media: "(prefers-color-scheme: dark)", color: "black" },
   ],
 };
-
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const activeThemeValue = cookieStore.get("active_theme")?.value;
+  const isScaled = activeThemeValue?.endsWith("-scaled");
+
   return (
     <html
       lang="en"
@@ -47,7 +52,9 @@ export default async function RootLayout({
     >
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "bg-background overscroll-none font-sans antialiased",
+          activeThemeValue ? `theme-${activeThemeValue}` : "",
+          isScaled ? "theme-scaled" : "",
           fonts.sans,
           fonts.mono
         )}
@@ -57,9 +64,12 @@ export default async function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
+          enableColorScheme
         >
           <ConvexClientProvider>
-            {children}
+            <ActiveThemeProvider initialTheme={activeThemeValue}>
+              {children}
+            </ActiveThemeProvider>
           </ConvexClientProvider>
         </Providers>
       </body>

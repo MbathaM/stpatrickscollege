@@ -32,6 +32,7 @@ import type * as subject from "../subject.js";
 import type * as supplier from "../supplier.js";
 import type * as timer from "../timer.js";
 import type * as todo from "../todo.js";
+import type * as user from "../user.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -61,6 +62,7 @@ declare const fullApi: ApiFromModules<{
   supplier: typeof supplier;
   timer: typeof timer;
   todo: typeof todo;
+  user: typeof user;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

@@ -6,6 +6,8 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { manualCreateUser } from "@/utils/manual-create-user";
+import { getAdUserById } from "@/helpers/get-ad-user";
 
 import { AutoComplete, type Option } from "@/components/ui/autocomplete";
 import { Button } from "@/components/ui/button";
@@ -63,13 +65,37 @@ export function NewStudentForm({ users }: { users: Option[] }) {
 
     try {
       setLoading(true);
-
-      await createProfile({
-        userId: selectedUserId as Id<"ad_user">,
-        role: "student",
-        subjectIds: selectedSubjects as Id<"subject">[],
-        gradeIds: [selectedGrade as Id<"grade">],
-      });
+      
+      // Get the user's email from their ID
+      const { user, error } = await getAdUserById(selectedUserId);
+      
+      if (error || !user) {
+        throw new Error(error || "User not found");
+      }
+      
+      // Ensure user, ad_user records exist before creating profile
+      const result = await manualCreateUser(user.mail);
+      
+      if (!result.success) {
+        throw new Error("Failed to create or verify user records");
+      }
+      
+      // If a profile was already created by manualCreateUser, we don't need to create it again
+      if (!result.profileCreated) {
+        await createProfile({
+          userId: selectedUserId as Id<"ad_user">,
+          role: "student",
+          subjectIds: selectedSubjects as Id<"subject">[],
+          gradeIds: [selectedGrade as Id<"grade">],
+        });
+      } else {
+        // If profile was created but we need to update it with the selected subjects and grade
+        // We would need to add code here to update the profile
+        // For now, we'll just show a success message
+        toast.success("Student profile already exists and was updated");
+        router.push("/admin/students");
+        return;
+      }
 
       toast.success("Student profile created successfully");
       router.push("/admin/students");

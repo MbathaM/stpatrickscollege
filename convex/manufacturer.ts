@@ -16,6 +16,16 @@ export const create = mutation({
   },
 });
 
+export const getByName = query({
+  args: { name: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("manufacturer")
+      .filter((q) => q.eq(q.field("name"), args.name))
+      .first();
+  },
+});
+
 export const list = query({
   handler: async (ctx) => {
     return await ctx.db.query("manufacturer").collect();

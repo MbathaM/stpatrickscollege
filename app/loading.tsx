@@ -1,4 +1,3 @@
-import { Loader2 } from "lucide-react";
 import Image from "next/image";
 
 export default function Loading() {
@@ -12,8 +11,6 @@ export default function Loading() {
           height={30}
           className="animate-pulse"
         />
-        {/* <Loader2 className="animate-spin mr-2" /> */}
-        {/* Loading... */}
       </span>
     </div>
   );

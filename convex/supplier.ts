@@ -18,6 +18,18 @@ export const list = query({
   },
 });
 
+export const getByName = query({
+  args: {
+    name: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("supplier")
+      .filter((q) => q.eq(q.field("name"), args.name))
+      .collect();
+  },
+});
+
 export const getById = query({
   args: {
     id: v.id("supplier"),

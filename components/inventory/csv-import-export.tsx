@@ -25,6 +25,7 @@ export function CsvImportExport() {
   const [isExporting, setIsExporting] = useState(false);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  
 
   // Handle CSV export
   const handleExport = () => {
@@ -74,57 +75,9 @@ export function CsvImportExport() {
 
     try {
       setIsImporting(true);
-      
-      // Read the file
       const text = await file.text();
-      
-      // Parse CSV to assets
-      const importedAssets = csvToAssets(text);
-      
-      if (importedAssets.length === 0) {
-        toast.error("No valid assets found in the CSV file");
-        return;
-      }
+      const { successCount, errorCount } = await importCSV(text);
 
-      // Import each asset
-      let successCount = 0;
-      let errorCount = 0;
-
-      for (const asset of importedAssets) {
-        try {
-          // Ensure required fields are present
-          if (!asset.assetName || !asset.assetTag || !asset.model) {
-            errorCount++;
-            continue;
-          }
-
-          // Create the asset
-          await createAsset({
-            company: asset.company,
-            assetName: asset.assetName,
-            assetTag: asset.assetTag,
-            model: asset.model,
-            modelNo: asset.modelNo,
-            serialNumber: asset.serialNumber,
-            purchasedDate: asset.purchasedDate,
-            cost: asset.cost,
-            eol: asset.eol,
-            orderNumber: asset.orderNumber,
-            notes: asset.notes,
-            newBattery: asset.newBattery,
-            newStudent: asset.newStudent,
-            class: asset.class,
-            grade: asset.grade,
-          });
-
-          successCount++;
-        } catch (error) {
-          console.error("Error importing asset:", error);
-          errorCount++;
-        }
-      }
-
-      // Show results
       if (successCount > 0) {
         toast.success(`Successfully imported ${successCount} assets`);
       }
@@ -133,7 +86,6 @@ export function CsvImportExport() {
         toast.error(`Failed to import ${errorCount} assets`);
       }
 
-      // Close dialog and reset state
       setImportDialogOpen(false);
       setFile(null);
     } catch (error) {

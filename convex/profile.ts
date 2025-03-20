@@ -31,10 +31,10 @@ export const create = mutation({
       classroom: args.classroom,
       gradeIds: args.gradeIds,
       subjectIds: args.subjectIds,
-      hasConcession: args.hasConcession || false,
+      hasConcession: args.hasConcession ?? false,
       concessionType: args.concessionType,
       concessionTime: args.concessionTime,
-      isComplete: args.isComplete || true,
+      isComplete: args.isComplete ?? true, // Correct defaulting behavior
       permissions: permissions,
     });
   },

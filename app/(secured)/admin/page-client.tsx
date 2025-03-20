@@ -26,14 +26,12 @@ export default function AdminDashboardPageClient({
 }: {
   name: string;
   email: string;
-  teacherCount: any;
-  studentCount: any;
-  subjectCount: any;
-  gradeCount: any;
-  examCount: any;
+  teacherCount: number;
+  studentCount: number;
+  subjectCount: number;
+  gradeCount: number;
+  examCount: number;
 }) {
-  const { data } = authClient.useSession();
-
 
   // Loading state
   if (

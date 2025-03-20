@@ -4,7 +4,7 @@ import { authOptions } from "@/utils/auth.options";
 import { customSession } from "better-auth/plugins";
 import { siteConfig } from "@/config/site";
 // import { createAuthMiddleware } from "better-auth/api";
-import { createAdUser } from "./create-ad-user";
+import { afterDBCreate } from "./after-db-create";
 
 export const auth = betterAuth({
   appName: siteConfig.name,
@@ -42,7 +42,7 @@ export const auth = betterAuth({
       create: {
         after: async (user, ctx) => {
           //perform additional actions, like creating a stripe customer
-          const response = await createAdUser(user.email, user.id);
+          const response = await afterDBCreate(user.email, user.id);
           if (response.error) {
             throw new APIError("BAD_REQUEST", {
               message: response.error,

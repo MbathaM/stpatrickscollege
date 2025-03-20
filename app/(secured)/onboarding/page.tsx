@@ -1,31 +1,37 @@
 import { getSession } from "@/helpers/get-sessions";
-import { redirect } from "next/navigation";
-import { preloadQuery, preloadedQueryResult } from "convex/nextjs";
 import { OnboardingStudentForm } from "./student-form";
 import { OnboardingTeacherForm } from "./teacher-form";
+import { getRoleByEmail } from "@/lib/utils";
+import { getGrades, getSubjects } from "@/helpers/get-grade_subjects";
+import { preloadQuery, preloadedQueryResult } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 
 export default async function OnboardingPage() {
-  const { user, session } = await getSession();
+  const { user } = await getSession();
 
-  if (!session) {
-    redirect("/sign-in");
-  }
+  const email = user?.email as string;
+  const role = getRoleByEmail(email);
+  const grades = await getGrades();
+  const subjects = await getSubjects();
 
-// const email = user?.email as string;
-//   const profile = preloadedQueryResult(await preloadQuery(api.profile.getByEmail, { email }));
-
-  // if (!profile) {
-  //   redirect("/sign-in");
-  // }
-  // if (profile?.isComplete == true) {
-  //   redirect("/dashboard");
-  // }
-  
-// const role = profile?.role;
-  return role === "teacher" ? (
-    <OnboardingTeacherForm email={email} />
-  ) : (
-    <OnboardingStudentForm email={email} />
+  const ad_user = preloadedQueryResult(
+    await preloadQuery(api.ad_user.getByUserEmail, { email: email })
   );
+
+  if (role === "teacher") {
+    return (
+      <OnboardingTeacherForm
+        subjects={subjects}
+        grades={grades}
+        ad_user={ad_user}
+      />
+    );
+  } else
+    return (
+      <OnboardingStudentForm
+        subjects={subjects}
+        grades={grades}
+        ad_user={ad_user}
+      />
+    );
 }

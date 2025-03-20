@@ -6,8 +6,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { api } from "@/convex/_generated/api";
-import { useQuery } from "convex/react";
+// Remove the client-side imports
+// import { api } from "@/convex/_generated/api";
+// import { useQuery } from "convex/react";
 import { ChevronsUpDown } from "lucide-react";
 import * as React from "react";
 import { Control } from "react-hook-form";
@@ -18,10 +19,13 @@ interface SubjectSelectorProps {
   name: string;
   label?: string;
   description?: string;
+  // Add subjects as a required prop
+  subjects: any[];
 }
 
-export function SubjectSelector({ control, name, label = "Subjects", description }: SubjectSelectorProps) {
-  const subjects = useQuery(api.subject.list);
+export function SubjectSelector({ control, name, label = "Subjects", description, subjects }: SubjectSelectorProps) {
+  // Remove the useQuery hook since we're now passing subjects as a prop
+  // const subjects = useQuery(api.subject.list);
   const [open, setOpen] = React.useState(false);
 
   return (

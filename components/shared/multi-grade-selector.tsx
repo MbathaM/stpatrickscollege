@@ -19,8 +19,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { api } from "@/convex/_generated/api";
-import { useQuery } from "convex/react";
+// Remove the client-side imports
+// import { api } from "@/convex/_generated/api";
+// import { useQuery } from "convex/react";
 import { ChevronsUpDown } from "lucide-react";
 import * as React from "react";
 import { Control } from "react-hook-form";
@@ -31,6 +32,8 @@ interface GradeSelectorProps {
   name: string;
   label?: string;
   description?: string;
+  // Add grades as a required prop
+  grades: any[];
 }
 
 export function MultiGradeSelector({
@@ -38,8 +41,10 @@ export function MultiGradeSelector({
   name,
   label = "Grades",
   description,
+  grades, // Add grades prop here
 }: GradeSelectorProps) {
-  const grades = useQuery(api.grade.list);
+  // Remove the useQuery hook since we're now passing grades as a prop
+  // const grades = useQuery(api.grade.list);
   const [open, setOpen] = React.useState(false);
 
   return (

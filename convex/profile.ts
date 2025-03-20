@@ -52,10 +52,23 @@ export const getById = query({
 export const getByUserEmail = query({
   args: { email: v.string() },
   handler: async (ctx, args) => {
+    // First, find the ad_user with this email
+    const users = await ctx.db
+      .query("ad_user")
+      .filter((q) => q.eq(q.field("email"), args.email))
+      .collect();
+
+    if (users.length === 0) {
+      return null;
+    }
+
+    // Then find the profile associated with this user
+    const userId = users[0]._id;
     const profiles = await ctx.db
       .query("profile")
-      .filter((q) => q.eq(q.field("userId"), args.email))
+      .filter((q) => q.eq(q.field("userId"), userId))
       .collect();
+
     return profiles[0];
   },
 });

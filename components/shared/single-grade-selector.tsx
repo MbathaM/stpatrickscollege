@@ -2,8 +2,9 @@
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { api } from "@/convex/_generated/api";
-import { useQuery } from "convex/react";
+// Remove the client-side imports
+// import { api } from "@/convex/_generated/api";
+// import { useQuery } from "convex/react";
 import { Control } from "react-hook-form";
 
 interface GradeSelectorProps {
@@ -12,10 +13,13 @@ interface GradeSelectorProps {
   name: string;
   label?: string;
   description?: string;
+  // Add grades as a required prop
+  grades: any[];
 }
 
-export function SingleGradeSelector({ control, name, label = "Grade", description }: GradeSelectorProps) {
-  const grades = useQuery(api.grade.list);
+export function SingleGradeSelector({ control, name, label = "Grade", description, grades }: GradeSelectorProps) {
+  // Remove the useQuery hook since we're now passing grades as a prop
+  // const grades = useQuery(api.grade.list);
 
   return (
     <FormField

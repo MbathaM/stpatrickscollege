@@ -34,8 +34,8 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
-import { Id, DataModel } from "@/convex/_generated/dataModel";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Id, DataModel } from "@/convex/_generated/dataModel";
 
 type Profile = DataModel["profile"]["document"] []
 type User = DataModel["ad_user"]["document"] []

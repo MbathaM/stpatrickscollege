@@ -2,7 +2,6 @@ import { api } from "@/convex/_generated/api";
 import {
   preloadQuery,
   preloadedQueryResult,
-  fetchMutation,
 } from "convex/nextjs";
 import DashboardPageClient from "./page-client";
 import { headers } from "next/headers";

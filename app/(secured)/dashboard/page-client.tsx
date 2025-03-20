@@ -7,7 +7,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Id } from "@/convex/_generated/dataModel";
+import { Id, DataModel } from "@/convex/_generated/dataModel";
+
+type Profile = DataModel["profile"]["document"] | null
+type Subject = DataModel["subject"]["document"] []
+type Grade = DataModel["grade"]["document"] []
 
 export default function DashboardPageClient({
   name,
@@ -20,18 +24,18 @@ export default function DashboardPageClient({
   name: string;
   email: string;
   role: string;
-  profile: any;
-  grades: any;
-  subjects: any;
+  profile: Profile;
+  grades: Grade;
+  subjects: Subject;
 }) {
   // Filter subjects and grades based on teacher's profile
   const teacherSubjects =
-    subjects?.filter((subject: { _id: Id<"subject"> }) =>
+    subjects?.filter((subject) =>
       profile?.subjectIds?.includes(subject._id)
     ) || [];
 
   const teacherGrades =
-    grades?.filter((grade: { _id: Id<"grade"> }) =>
+    grades?.filter((grade ) =>
       profile?.gradeIds?.includes(grade._id)
     ) || [];
 
@@ -92,7 +96,7 @@ export default function DashboardPageClient({
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Classroom:</span>
                   <span className="font-medium">
-                    {profile.classroom || "Not set"}
+                    {profile?.classroom || "Not set"}
                   </span>
                 </div>
               )}
@@ -181,18 +185,18 @@ export default function DashboardPageClient({
                 <CardDescription>Your exam concession details</CardDescription>
               </CardHeader>
               <CardContent>
-                {profile.hasConcession ? (
+                {profile?.hasConcession ? (
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Type:</span>
                       <span className="font-medium">
-                        {profile.concessionType}
+                        {profile?.concessionType}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Extra Time:</span>
                       <span className="font-medium">
-                        {profile.concessionTime} minutes
+                        {profile?.concessionTime} minutes
                       </span>
                     </div>
                   </div>

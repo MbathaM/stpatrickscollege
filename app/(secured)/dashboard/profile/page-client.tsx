@@ -2,7 +2,7 @@
 
 import { toast } from "@/components/ui/sonner";
 import { api } from "@/convex/_generated/api";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
 import { SubjectSelector } from "@/components/shared/subject-selector";
 import { MultiGradeSelector } from "@/components/shared/multi-grade-selector";
 import { SingleGradeSelector } from "@/components/shared/single-grade-selector";
@@ -235,6 +235,7 @@ export function ProfilePageClient({
                   <h3 className="text-lg font-medium">Teaching Information</h3>
 
                   <MultiGradeSelector
+                    grades={grades}
                     control={form.control}
                     name="grades"
                     label="Grade Level"
@@ -242,6 +243,7 @@ export function ProfilePageClient({
                   />
 
                   <SubjectSelector
+                    subjects={subjects}
                     control={form.control}
                     name="subjects"
                     label="Subjects"

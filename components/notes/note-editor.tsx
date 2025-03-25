@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
+import { updateNote, createNote } from "./actions";
 
 const FormSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -53,11 +54,14 @@ const colorOptions = [
   { value: "bg-pink-50", label: "Pink" },
 ];
 
-export function NoteEditor({ userId, note, onSuccess, onCancel }: NoteEditorProps) {
-  const createNote = useMutation(api.notes.create);
-  const updateNote = useMutation(api.notes.update);
+export function NoteEditor({
+  userId,
+  note,
+  onSuccess,
+  onCancel,
+}: NoteEditorProps) {
   const [tagInput, setTagInput] = useState("");
-  
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -88,26 +92,30 @@ export function NoteEditor({ userId, note, onSuccess, onCancel }: NoteEditorProp
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
       if (isEditing && note) {
-        await updateNote({
-          id: note._id,
-          title: data.title,
-          content: data.content,
-          color: data.color,
-          tags: data.tags,
-        });
+        await updateNote(
+          {
+            title: data.title,
+            content: data.content,
+            color: data.color,
+            tags: data.tags,
+          },
+          note._id
+        );
         toast.success("Note updated successfully");
       } else {
-        await createNote({
-          title: data.title,
-          content: data.content,
-          userId,
-          color: data.color,
-          tags: data.tags,
-          isShared: false,
-        });
+        await createNote(
+          {
+            title: data.title,
+            content: data.content,
+            color: data.color,
+            tags: data.tags,
+            isShared: false,
+          },
+          userId
+        );
         toast.success("Note created successfully");
       }
-      
+
       if (onSuccess) onSuccess();
       form.reset();
     } catch (error) {
@@ -140,10 +148,10 @@ export function NoteEditor({ userId, note, onSuccess, onCancel }: NoteEditorProp
             <FormItem>
               <FormLabel>Content</FormLabel>
               <FormControl>
-                <Textarea 
-                  placeholder="Write your note here..." 
-                  className="min-h-[200px]" 
-                  {...field} 
+                <Textarea
+                  placeholder="Write your note here..."
+                  className="min-h-[200px]"
+                  {...field}
                 />
               </FormControl>
               <FormMessage />
@@ -159,9 +167,9 @@ export function NoteEditor({ userId, note, onSuccess, onCancel }: NoteEditorProp
               <FormLabel>Color</FormLabel>
               <div className="flex flex-wrap gap-2">
                 {colorOptions.map((color) => (
-                  <div 
+                  <div
                     key={color.value}
-                    className={`w-8 h-8 rounded-full cursor-pointer border-2 ${color.value} ${field.value === color.value ? 'border-primary' : 'border-transparent'}`}
+                    className={`w-8 h-8 rounded-full cursor-pointer border-2 ${color.value} ${field.value === color.value ? "border-primary" : "border-transparent"}`}
                     onClick={() => form.setValue("color", color.value)}
                     title={color.label}
                   />
@@ -205,7 +213,9 @@ export function NoteEditor({ userId, note, onSuccess, onCancel }: NoteEditorProp
                   </Badge>
                 ))}
               </div>
-              <FormDescription>Add tags to categorize your note</FormDescription>
+              <FormDescription>
+                Add tags to categorize your note
+              </FormDescription>
             </FormItem>
           )}
         />
@@ -216,9 +226,7 @@ export function NoteEditor({ userId, note, onSuccess, onCancel }: NoteEditorProp
               Cancel
             </Button>
           )}
-          <Button type="submit">
-            {isEditing ? "Update" : "Create"} Note
-          </Button>
+          <Button type="submit">{isEditing ? "Update" : "Create"} Note</Button>
         </div>
       </form>
     </Form>

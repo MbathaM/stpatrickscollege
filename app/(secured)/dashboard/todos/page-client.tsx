@@ -1,73 +1,84 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useMutation, useQuery } from 'convex/react';
-import { api } from '@/convex/_generated/api';
-import { Id } from '@/convex/_generated/dataModel';
-import { toast } from 'sonner';
+import { useState } from "react";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { DataModel, Id } from "@/convex/_generated/dataModel";
+import { toast } from "sonner";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Search, Plus } from 'lucide-react';
-import { TodoItem } from '@/components/todo/todo-item';
-import { TodoForm } from '@/components/todo/todo-form';
-import { authClient } from '@/lib/auth-client';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Search, Plus } from "lucide-react";
+import { TodoItem } from "@/components/todo/todo-item";
+import { TodoForm } from "@/components/todo/todo-form";
+import { authClient } from "@/lib/auth-client";
+import { deleteTodo, shareTodo, toggleComplete } from "./actions";
 
-export default function TodosPage() {
+type Todos = DataModel["todo"]["document"][];
+type Subjects = DataModel["subject"]["document"][];
+
+export default function TodosPage({
+  todos,
+  subjects,
+}: {
+  todos: Todos;
+  subjects: Subjects;
+}) {
   const { data } = authClient.useSession();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [currentTodo, setCurrentTodo] = useState(null);
 
-  const todos = useQuery(api.todo.list);
-  const deleteTodo = useMutation(api.todo.remove);
-  const shareTodo = useMutation(api.todo.share);
-  const toggleComplete = useMutation(api.todo.toggleComplete);
+  const userId = data?.user?.id as Id<"profile">;
 
-  const userId = data?.user?.id as Id<"profile"> 
+  const filteredTodos =
+    todos?.filter(
+      (todo) =>
+        todo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (todo.description || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+    ) || [];
 
-  const filteredTodos = todos?.filter(todo =>
-    todo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (todo.description || '').toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
-
-  const handleDelete = async (id: Id<'todo'>) => {
-    if (confirm('Are you sure you want to delete this todo?')) {
+  const handleDelete = async (id: Id<"todo">) => {
+    if (confirm("Are you sure you want to delete this todo?")) {
       try {
-        await deleteTodo({ id });
-        toast.success('Todo deleted successfully');
+        await deleteTodo(id);
+        toast.success("Todo deleted successfully");
       } catch (error) {
-        console.error('Error deleting todo:', error);
-        toast.error('Failed to delete todo');
+        console.error("Error deleting todo:", error);
+        toast.error("Failed to delete todo");
       }
     }
   };
 
-  const handleShare = async (id: Id<'todo'>) => {
+  const handleShare = async (id: Id<"todo">) => {
     try {
-      await shareTodo({ id });
-      toast.success('Todo shared successfully');
+      await shareTodo(id);
+      toast.success("Todo shared successfully");
     } catch (error) {
-      console.error('Error sharing todo:', error);
-      toast.error('Failed to share todo');
+      console.error("Error sharing todo:", error);
+      toast.error("Failed to share todo");
     }
   };
 
-  const handleToggleComplete = async (id: Id<'todo'>, isCompleted: boolean) => {
+  const handleToggleComplete = async (id: Id<"todo">, isCompleted: boolean) => {
     try {
-      await toggleComplete({ id, isCompleted });
-      toast.success(`Todo marked as ${isCompleted ? 'completed' : 'incomplete'}`);
+      await toggleComplete(id, isCompleted);
+      toast.success(
+        `Todo marked as ${isCompleted ? "completed" : "incomplete"}`
+      );
     } catch (error) {
-      console.error('Error updating todo:', error);
-      toast.error('Failed to update todo');
+      console.error("Error updating todo:", error);
+      toast.error("Failed to update todo");
     }
   };
 
-  const handleEdit = (id: Id<'todo'>) => {
-    const todo = todos?.find(t => t._id === id);
+  const handleEdit = (id: Id<"todo">) => {
+    const todo = todos?.find((t) => t._id === id);
     if (todo) {
       setCurrentTodo(todo as any); // Type assertion to resolve type mismatch
       setIsEditDialogOpen(true);
@@ -109,10 +120,12 @@ export default function TodosPage() {
                 priority={todo.priority}
                 isShared={todo.isShared}
                 updatedAt={todo._creationTime.toString()}
-                onToggleComplete={(id, isCompleted) => handleToggleComplete(id as Id<'todo'>, isCompleted)}
-                onEdit={(id) => handleEdit(id as Id<'todo'>)}
-                onDelete={(id) => handleDelete(id as Id<'todo'>)}
-                onShare={(id) => handleShare(id as Id<'todo'>)}
+                onToggleComplete={(id, isCompleted) =>
+                  handleToggleComplete(id as Id<"todo">, isCompleted)
+                }
+                onEdit={(id) => handleEdit(id as Id<"todo">)}
+                onDelete={(id) => handleDelete(id as Id<"todo">)}
+                onShare={(id) => handleShare(id as Id<"todo">)}
               />
             ))}
           </div>
@@ -121,7 +134,9 @@ export default function TodosPage() {
 
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent>
-          <TodoForm userId={userId}
+          <TodoForm
+            subjects={subjects}
+            userId={userId}
             // Remove userId prop as it's not defined or needed
             onSuccess={() => setIsAddDialogOpen(false)}
             onCancel={() => setIsAddDialogOpen(false)}
@@ -132,6 +147,7 @@ export default function TodosPage() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <TodoForm
+            subjects={subjects}
             userId={userId}
             todo={currentTodo || undefined}
             onSuccess={() => setIsEditDialogOpen(false)}

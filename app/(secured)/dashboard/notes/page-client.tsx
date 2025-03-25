@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { Id } from '@/convex/_generated/dataModel';
+import { DataModel, Id } from '@/convex/_generated/dataModel';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -14,17 +14,18 @@ import { Search, Plus } from 'lucide-react';
 import { NoteCard } from '@/components/notes/note-card';
 import { NoteEditor } from '@/components/notes/note-editor';
 import { authClient } from '@/lib/auth-client';
+import { deleteNote, shareNote } from './actions';
 
-export default function NotesPageClient() {
+type Notes = DataModel["note"]["document"] []
+
+export default function NotesPageClient({notes}: {notes: Notes}) {
   const { data } = authClient.useSession();
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [currentNote, setCurrentNote] = useState(null);
 
-  const notes = useQuery(api.notes.list);
-  const deleteNote = useMutation(api.notes.remove);
-  const shareNote = useMutation(api.notes.addUserToShare);
+  
   const userId = data?.user?.id as Id<"profile"> 
   const filteredNotes = notes?.filter(note =>
     note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -34,7 +35,7 @@ export default function NotesPageClient() {
   const handleDelete = async (id: Id<'note'>) => {
     if (confirm('Are you sure you want to delete this note?')) {
       try {
-        await deleteNote({ id });
+        await deleteNote(id);
         toast.success('Note deleted successfully');
       } catch (error) {
         console.error('Error deleting note:', error);
@@ -46,7 +47,7 @@ export default function NotesPageClient() {
   const handleShare = async (id: Id<'note'>) => {
     try {
       // Get the user ID from somewhere (you'll need to implement this)
-      await shareNote({ id, userId });
+      await shareNote(id, userId);
       toast.success('Note shared successfully');
     } catch (error) {
       console.error('Error sharing note:', error);

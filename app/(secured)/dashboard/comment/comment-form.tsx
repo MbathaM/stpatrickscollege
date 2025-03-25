@@ -1,7 +1,5 @@
 "use client";
 
-import { api } from "@/convex/_generated/api";
-import { useQuery } from "convex/react";
 import { SetStateAction, useState } from "react";
 
 import { client } from "@/api/client";
@@ -27,20 +25,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { authClient } from "@/lib/auth-client";
+import type { DataModel } from "@/convex/_generated/dataModel";
 
-export function CommentForm({ users }: { users: Option[] }) {
-  const { data } = authClient.useSession();
-  const email = data?.user?.email || "";
+type Profile = DataModel["profile"]["document"] | null;
+type Grade = DataModel["grade"]["document"][];
+type Subject = DataModel["subject"]["document"][];
 
-  // Get teacher profile
-  const profile = useQuery(api.profile.getByEmail, email ? { email } : "skip");
-
-  // Get grades and subjects
-  const grades = useQuery(api.grade.list);
-  const subjects = useQuery(api.subject.list);
-
-  // Filter subjects and grades based on teacher's profile
+export function CommentForm({
+  users,
+  profile,
+  grades,
+  subjects,
+}: {
+  users: Option[];
+  profile: Profile;
+  grades: Grade;
+  subjects: Subject;
+}) {
   const teacherSubjects =
     subjects?.filter((subject) => profile?.subjectIds?.includes(subject._id)) ||
     [];
@@ -191,7 +192,9 @@ export function CommentForm({ users }: { users: Option[] }) {
                   id="prompt"
                   placeholder="Provide additional context about the student's performance..."
                   value={prompt}
-                  onChange={(e: { target: { value: SetStateAction<string>; }; }) => setPrompt(e.target.value)}
+                  onChange={(e: {
+                    target: { value: SetStateAction<string> };
+                  }) => setPrompt(e.target.value)}
                   disabled={loading}
                   maxLength={400}
                 />

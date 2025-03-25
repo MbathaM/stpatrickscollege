@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+import { DataModel, Id } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -28,10 +28,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-
+import { updateTodo, createTodo } from "./actions";
 const FormSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
@@ -39,6 +43,8 @@ const FormSchema = z.object({
   priority: z.string().default("medium"),
   relatedSubjectId: z.string().optional(),
 });
+
+type Subjects = DataModel["subject"]["document"] [];
 
 interface TodoFormProps {
   userId: Id<"profile">;
@@ -54,13 +60,10 @@ interface TodoFormProps {
   };
   onSuccess?: () => void;
   onCancel?: () => void;
+  subjects:Subjects
 }
 
-export function TodoForm({ userId, todo, onSuccess, onCancel }: TodoFormProps) {
-  const createTodo = useMutation(api.todo.create);
-  const updateTodo = useMutation(api.todo.update);
-  const subjects = useQuery(api.subject.list) || [];
-  
+export function TodoForm({ subjects, userId, todo, onSuccess, onCancel }: TodoFormProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -68,7 +71,9 @@ export function TodoForm({ userId, todo, onSuccess, onCancel }: TodoFormProps) {
       description: todo?.description || "",
       dueDate: todo?.dueDate ? new Date(todo.dueDate) : undefined,
       priority: todo?.priority || "medium",
-      relatedSubjectId: todo?.relatedSubjectId ? todo.relatedSubjectId : undefined,
+      relatedSubjectId: todo?.relatedSubjectId
+        ? todo.relatedSubjectId
+        : undefined,
     },
   });
 
@@ -79,32 +84,39 @@ export function TodoForm({ userId, todo, onSuccess, onCancel }: TodoFormProps) {
       const formattedData = {
         ...data,
         dueDate: data.dueDate ? data.dueDate.toISOString() : undefined,
-        relatedSubjectId: data.relatedSubjectId ? data.relatedSubjectId as Id<"subject"> : undefined,
+        relatedSubjectId: data.relatedSubjectId
+          ? (data.relatedSubjectId as Id<"subject">)
+          : undefined,
       };
 
       if (isEditing && todo) {
-        await updateTodo({
-          id: todo._id,
-          title: formattedData.title,
-          description: formattedData.description,
-          dueDate: formattedData.dueDate,
-          priority: formattedData.priority,
-          relatedSubjectId: formattedData.relatedSubjectId,
-        });
+        await updateTodo(
+          {
+            title: formattedData.title,
+            description: formattedData.description,
+            dueDate: formattedData.dueDate,
+            priority: formattedData.priority,
+            relatedSubjectId: formattedData.relatedSubjectId,
+          },
+          todo._id
+        );
         toast.success("Todo updated successfully");
       } else {
-        await createTodo({
-          title: formattedData.title,
-          description: formattedData.description,
-          userId,
-          dueDate: formattedData.dueDate,
-          priority: formattedData.priority,
-          relatedSubjectId: formattedData.relatedSubjectId,
-          isShared: false,
-        });
+        await createTodo(
+          {
+            title: formattedData.title,
+            description: formattedData.description,
+
+            dueDate: formattedData.dueDate,
+            priority: formattedData.priority,
+            relatedSubjectId: formattedData.relatedSubjectId,
+            isShared: false,
+          },
+          userId
+        );
         toast.success("Todo created successfully");
       }
-      
+
       if (onSuccess) onSuccess();
       form.reset();
     } catch (error) {
@@ -137,9 +149,9 @@ export function TodoForm({ userId, todo, onSuccess, onCancel }: TodoFormProps) {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea 
-                  placeholder="Add details about your todo..." 
-                  {...field} 
+                <Textarea
+                  placeholder="Add details about your todo..."
+                  {...field}
                   value={field.value || ""}
                 />
               </FormControl>
@@ -185,9 +197,7 @@ export function TodoForm({ userId, todo, onSuccess, onCancel }: TodoFormProps) {
                   />
                 </PopoverContent>
               </Popover>
-              <FormDescription>
-                Select a due date for your todo
-              </FormDescription>
+              <FormDescription>Select a due date for your todo</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -225,9 +235,9 @@ export function TodoForm({ userId, todo, onSuccess, onCancel }: TodoFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Related Subject</FormLabel>
-              <Select 
-                onValueChange={field.onChange} 
-                defaultValue={field.value} 
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value}
                 value={field.value}
               >
                 <FormControl>
@@ -257,9 +267,7 @@ export function TodoForm({ userId, todo, onSuccess, onCancel }: TodoFormProps) {
               Cancel
             </Button>
           )}
-          <Button type="submit">
-            {isEditing ? "Update" : "Create"} Todo
-          </Button>
+          <Button type="submit">{isEditing ? "Update" : "Create"} Todo</Button>
         </div>
       </form>
     </Form>
